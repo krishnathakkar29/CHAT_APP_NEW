@@ -313,18 +313,6 @@ const Login = () => {
         }}
       >
         <Paper
-          // elevation={3}
-          // sx={{
-          //   padding: 4,
-          //   display: "flex",
-          //   flexDirection: "column",
-          //   alignItems: "center",
-          //   zIndex: 1,
-          //   position: "relative",
-          //   backdropFilter: "blur(10px)",
-          //   backgroundColor: "rgba(30, 41, 59, 0.8)", // Darker background color
-          //   color: "#E2E8F0", // Light text color
-          // }}
           elevation={3}
           sx={{
             padding: 4,
@@ -334,9 +322,15 @@ const Login = () => {
             zIndex: 1,
             position: "relative",
             backdropFilter: "blur(10px)",
-            backgroundColor: "#274472", // Adjust opacity for a lighter color
-            color: "#E2E8F0", // Light text color
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)", // Add box shadow
+            backgroundColor: "#1E293B", 
+            color: "#E2E8F0", 
+            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)", 
+            background: "rgba(255, 255, 255, 0.3)",
+            borderRadius: "16px",
+            boxShadow: " 0 4px 30px rgba(0, 0, 0, 0.1)",
+            backdropFilter: " bblur(0px)",
+            WebkitBackdropFilter: "bblur(0px)",
+            border: "1px solid rgba(255, 255, 255, 1)",
           }}
         >
           {isLogin ? (
@@ -382,10 +376,10 @@ const Login = () => {
                   value={password.value}
                   onChange={password.changeHandler}
                   InputLabelProps={{
-                    style: { color: "#94A3B8" },
+                    style: { color: "#CBD5E1" },
                   }}
                   InputProps={{
-                    style: { color: "#E2E8F0" },
+                    style: { color: "#CBD5E1" },
                     sx: {
                       "& .MuiOutlinedInput-notchedOutline": {
                         borderColor: "#94A3B8",
