@@ -1,9 +1,8 @@
-import React from 'react'
+import AppLayout from "@/components/layout/AppLayout";
+import React from "react";
 
 const Groups = () => {
-  return (
-    <div>Groups</div>
-  )
-}
+  return <div>Groups</div>;
+};
 
-export default Groups
+export default AppLayout()(Groups);
