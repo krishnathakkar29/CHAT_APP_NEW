@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Backdrop } from "@mui/material";
-import { lazy, useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
@@ -42,132 +42,133 @@ export default function Header() {
     navigate("/groups");
   };
   return (
-    <header className="flex items-center justify-between h-16 bg-gray-900 text-white px-4 md:px-6">
-      <div className="hidden sm:flex items-center gap-2">
-        <MessageCircleIcon className="h-6 w-6" />
-        <span className="text-lg font-medium">Chat App</span>
-      </div>
-      <div className="sm:hidden flex  items-center">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-400 hover:bg-white hover:text-gray-800"
-                onClick={handleMobile}
-              >
-                <MenuIcon className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Menu Icon</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-      <div className="flex items-center gap-4">
-        {/* 1st */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-400 hover:bg-white hover:text-gray-800"
-                onClick={openSearch}
-              >
-                <SearchIcon className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Search</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        {/* 2nd */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-400 hover:bg-white hover:text-gray-800"
-                onClick={openNewGroup}
-              >
-                <PlusIcon className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Creat Group</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        {/* hola! */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-400 hover:bg-white hover:text-gray-800"
-                onClick={navigateToGroups}
-              >
-                <GroupIcon className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Creat Group</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        {/* 3rd */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="relative">
+    <>
+      <header className="flex items-center justify-between h-16 bg-gray-900 text-white px-4 md:px-6">
+        <div className="hidden sm:flex items-center gap-2">
+          <MessageCircleIcon className="h-6 w-6" />
+          <span className="text-lg font-medium">Chat App</span>
+        </div>
+        <div className="sm:hidden flex  items-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-gray-400 hover:text-white"
-                  onClick={openNotification}
+                  className="text-gray-400 hover:bg-white hover:text-gray-800"
+                  onClick={handleMobile}
                 >
-                  <BellIcon className="h-5 w-5" />
+                  <MenuIcon className="h-5 w-5" />
                 </Button>
-                <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                  0
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Menu Icon</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+        <div className="flex items-center gap-4">
+          {/* 1st */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-400 hover:bg-white hover:text-gray-800"
+                  onClick={openSearch}
+                >
+                  <SearchIcon className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Search</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* 2nd */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-400 hover:bg-white hover:text-gray-800"
+                  onClick={openNewGroup}
+                >
+                  <PlusIcon className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Creat Group</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* hola! */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-400 hover:bg-white hover:text-gray-800"
+                  onClick={navigateToGroups}
+                >
+                  <GroupIcon className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Creat Group</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          {/* 3rd */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-gray-400 hover:text-white"
+                    onClick={openNotification}
+                  >
+                    <BellIcon className="h-5 w-5" />
+                  </Button>
+                  <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                    0
+                  </div>
                 </div>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Notifications</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Notifications</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
-        {/* 4th */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-gray-400 hover:bg-white hover:text-gray-800"
-                onClick={logoutHandler}
-              >
-                <LogOutIcon className="h-5 w-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Logout</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-
+          {/* 4th */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-400 hover:bg-white hover:text-gray-800"
+                  onClick={logoutHandler}
+                >
+                  <LogOutIcon className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Logout</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      </header>
       {isSearch && (
         <Suspense fallback={<Backdrop open />}>
           <SearchDialog />
@@ -185,7 +186,7 @@ export default function Header() {
           <NewGroupDialog />
         </Suspense>
       )}
-    </header>
+    </>
   );
 }
 
