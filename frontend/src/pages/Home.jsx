@@ -3,7 +3,7 @@ import AppLayout from '../components/layout/AppLayout'
 
 function Home() {
   return (
-    <div>Home</div>
+    <div className='text-center text-2xl p-8'>Select a friend to chat</div>
   )
 }
 

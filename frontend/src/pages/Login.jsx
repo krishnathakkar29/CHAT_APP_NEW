@@ -443,6 +443,7 @@ const Login = () => {
                       objectFit: "contain",
                       bgcolor: "#94A3B8", // Avatar background color
                     }}
+                    src={avatar.preview}
                   />
 
                   <IconButton
