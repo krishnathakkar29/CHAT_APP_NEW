@@ -2,9 +2,21 @@ import React from "react";
 import Header from "./Header";
 import Title from "../shared/Title";
 import { Grid } from "@mui/material";
+import ChatList from "../specific/ChatList";
+import { samepleChats } from "@/constant/sampleData";
+import { useParams } from "react-router-dom";
+import ProfileCard from "../specific/ProfileCard";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
+
+    const params = useParams()
+    const {chatId} = params
+
+    const handleDeleteChat = (e , _id , groupChat) => {
+      e.preventDefault()
+      console.log("Delete Chat" , _id, groupChat)
+    }
     return (
       <>
         <Title />
@@ -20,7 +32,18 @@ const AppLayout = () => (WrappedComponent) => {
             }}
             height={"100%"}
           >
-            FIrst
+            <ChatList
+              chats={samepleChats}
+              chatId={chatId}
+              newMessagesAlert={[
+                {
+                  chatId,
+                  count: 4,
+                },
+              ]}
+              onlineUsers={["1", "2"]}
+              handleDeleteChat={handleDeleteChat}
+            />
           </Grid>
 
           <Grid item xs={12} sm={8} md={5} lg={6} height={"100%"}>
@@ -38,11 +61,9 @@ const AppLayout = () => (WrappedComponent) => {
               bgcolor: "rgba(0,0,0,0.85)",
             }}
           >
-            Third
+            <ProfileCard />
           </Grid>
         </Grid>
-
-        
       </>
     );
   };

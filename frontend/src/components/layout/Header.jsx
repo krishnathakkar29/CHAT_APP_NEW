@@ -133,7 +133,7 @@ export default function Header() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:bg-white hover:text-gray-800"
                     onClick={openNotification}
                   >
                     <BellIcon className="h-5 w-5" />
@@ -171,19 +171,22 @@ export default function Header() {
       </header>
       {isSearch && (
         <Suspense fallback={<Backdrop open />}>
-          <SearchDialog />
+          <SearchDialog isOpen={isSearch} onOpenChange={openSearch} />
         </Suspense>
       )}
 
       {isNotification && (
         <Suspense fallback={<Backdrop open />}>
-          <NotifcationDialog />
+          <NotifcationDialog
+            isOpen={isNotification}
+            onOpenChange={setIsNotification}
+          />
         </Suspense>
       )}
 
       {isNewGroup && (
         <Suspense fallback={<Backdrop open />}>
-          <NewGroupDialog />
+          <NewGroupDialog isOpen={isNewGroup} onOpenChange={openNewGroup} />
         </Suspense>
       )}
     </>

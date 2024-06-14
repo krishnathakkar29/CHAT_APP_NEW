@@ -9,7 +9,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <CssBaseline />
     <HelmetProvider>
-      <App />
+      <div onContextMenu={(e) => e.preventDefault()}>
+        <App />
+      </div>
     </HelmetProvider>
   </React.StrictMode>
 );
