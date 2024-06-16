@@ -2,10 +2,19 @@ import { Avatar } from "@mui/material";
 import { Minus, Plus } from "lucide-react";
 import React, { memo } from "react";
 
-function UserItem({ user, handler, handlerIsLoading, isAdded = false }) {
+function UserItem({
+  user,
+  handler,
+  handlerIsLoading,
+  isAdded = false,
+  styling = {},
+}) {
   const { name, _id, avatar } = user;
   return (
-    <div className="flex items-center justify-between p-2 overflow-hidden max-w-full">
+    <div
+      className="flex items-center justify-between p-2  overflow-hidden max-w-full"
+      style={{...styling}}
+    >
       <Avatar
         src={avatar}
         sx={{

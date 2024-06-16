@@ -16,8 +16,8 @@ const ChatList = ({
   handleDeleteChat,
 }) => {
   return (
-    <Stack direction={"column"} width={width}>
-      {chats?.map((data , index) => {
+    <Stack direction={"column"} width={width} overflow={"auto"} height={"100%"}>
+      {chats?.map((data, index) => {
         const { avatar, name, _id, groupChat, members } = data;
 
         const newMessageAlert = newMessagesAlert.find(
@@ -30,7 +30,7 @@ const ChatList = ({
 
         return (
           <ChatItem
-          index={index}
+            index={index}
             newMessageAlert={newMessagesAlert}
             isOnline={isOnline}
             avatar={avatar}
@@ -40,7 +40,7 @@ const ChatList = ({
             groupChat={groupChat}
             sameSender={chatId == _id}
             handleDeleteChat={handleDeleteChat}
-            />
+          />
         );
       })}
     </Stack>
