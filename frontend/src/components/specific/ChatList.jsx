@@ -36,7 +36,7 @@ const ChatList = ({
             avatar={avatar}
             name={name}
             _id={_id}
-            key={_id}
+            key={index}
             groupChat={groupChat}
             sameSender={chatId == _id}
             handleDeleteChat={handleDeleteChat}

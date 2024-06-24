@@ -38,8 +38,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/user", userRouter);
-app.use("/chat", chatRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/chat", chatRouter);
 
 const user = {
   _id: "moimsd",

@@ -273,8 +273,14 @@ import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
 import { usernameValidator } from "../utils/validators";
 import ParticleRing from "../components/ParticleRing";
+import axios from "axios";
+import { server } from "@/constant/config";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import { userExists } from "@/redux/reducers/auth";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
 
   const username = useInputValidation("", usernameValidator);
@@ -285,8 +291,29 @@ const Login = () => {
   const avatar = useFileHandler("single");
 
   const toggleLogin = () => setIsLogin((prev) => !prev);
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/login`,
+        {
+          username: username.value,
+          password: password.value,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      dispatch(userExists(true));
+      toast.success(data?.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+    }
   };
   const handleSignUp = (e) => {
     e.preventDefault();
@@ -322,9 +349,9 @@ const Login = () => {
             zIndex: 1,
             position: "relative",
             backdropFilter: "blur(10px)",
-            backgroundColor: "#1E293B", 
-            color: "#E2E8F0", 
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)", 
+            backgroundColor: "#1E293B",
+            color: "#E2E8F0",
+            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
             background: "rgba(255, 255, 255, 0.3)",
             borderRadius: "16px",
             boxShadow: " 0 4px 30px rgba(0, 0, 0, 0.1)",
