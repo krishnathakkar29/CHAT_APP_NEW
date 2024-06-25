@@ -7,8 +7,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { server } from "@/constant/config";
+import { userNotExists } from "@/redux/reducers/auth";
 import { Backdrop } from "@mui/material";
+import axios from "axios";
 import { Suspense, lazy, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
@@ -17,6 +22,7 @@ const NewGroupDialog = lazy(() => import("../specific/NewGroup"));
 
 export default function Header() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isSearch, setIsSearch] = useState(false);
   const [isNewGroup, setIsNewGroup] = useState(false);
@@ -36,8 +42,20 @@ export default function Header() {
   const openNotification = () => {
     setIsNotification((prev) => !prev);
   };
-  const logoutHandler = () => {};
 
+  const logoutHandler = async () => {
+    try {
+      const { data } = await axios.get(`${server}/api/v1/user/logout`, {
+        withCredentials: true,
+      });
+      console.log(data);
+      dispatch(userNotExists());
+      toast.success(data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
+  };
   const navigateToGroups = () => {
     navigate("/groups");
   };

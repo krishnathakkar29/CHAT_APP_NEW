@@ -17,11 +17,11 @@ const newUser = TryCatch(async (req, res, next) => {
 
   if (!file) return next(new ErrorHandler("Please Upload Avatar"));
 
-  const result = await uploadFilesToCloudinary(file);
+  const result = await uploadFilesToCloudinary([file]);
 
   const avatar = {
-    public_id: "mopsam",
-    url: "iosnd",
+    public_id: result[0].public_id,
+    url: result[0].url,
   };
 
   const user = await User.create({
@@ -36,7 +36,6 @@ const newUser = TryCatch(async (req, res, next) => {
 });
 
 const login = TryCatch(async (req, res, next) => {
-  console.log("yaha hu bhai");
   const { username, password } = req.body;
 
   const user = await User.findOne({ username }).select("+password");
@@ -61,6 +60,7 @@ const getMyProfile = TryCatch(async (req, res, next) => {
 });
 
 const logout = TryCatch(async (req, res, next) => {
+  console.log("yaha aaya");
   return res
     .status(200)
     .cookie("chat-token", "", { ...cookieOptions, maxAge: 0 })

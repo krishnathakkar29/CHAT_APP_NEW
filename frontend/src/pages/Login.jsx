@@ -282,6 +282,7 @@ import { userExists } from "@/redux/reducers/auth";
 const Login = () => {
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const username = useInputValidation("", usernameValidator);
   const password = useInputValidation("");
@@ -293,6 +294,10 @@ const Login = () => {
   const toggleLogin = () => setIsLogin((prev) => !prev);
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    const toastId = toast.loading("Logging In...");
+
+    setIsLoading(true);
 
     try {
       const { data } = await axios.post(
@@ -310,13 +315,58 @@ const Login = () => {
       );
 
       dispatch(userExists(true));
-      toast.success(data?.message);
+      console.log(data.user);
+      toast.success(data?.message, {
+        id: toastId,
+      });
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something Went Wrong", {
+        id: toastId,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
-  const handleSignUp = (e) => {
+
+  const handleSignUp = async (e) => {
     e.preventDefault();
+
+    const toastId = toast.loading("Signing Up...");
+    setIsLoading(true);
+
+    const formData = new FormData();
+    formData.append("avatar", avatar.file);
+    formData.append("name", name.value);
+    formData.append("bio", bio.value);
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/new`,
+        formData,
+        config
+      );
+
+      dispatch(userExists(data.user));
+      console.log(data.user);
+      toast.success(data.message, {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something Went Wrong", {
+        id: toastId,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -328,7 +378,7 @@ const Login = () => {
         // backgroundColor: "#1E293B",
       }}
     >
-      <ParticleRing />
+      {/* <ParticleRing /> */}
       <Container
         component={"main"}
         maxWidth="xs"
@@ -428,6 +478,7 @@ const Login = () => {
                   color="primary"
                   type="submit"
                   fullWidth
+                  disabled={isLoading}
                 >
                   Login
                 </Button>
@@ -611,6 +662,7 @@ const Login = () => {
                   color="primary"
                   type="submit"
                   fullWidth
+                  disabled={isLoading}
                 >
                   Sign Up
                 </Button>

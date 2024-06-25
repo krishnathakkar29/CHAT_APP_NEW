@@ -33,10 +33,10 @@ cloudinary.config({
 connectDB();
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/chat", chatRouter);
@@ -72,18 +72,15 @@ io.on("connection", (socket) => {
     const membersSockets = getSockets(members);
 
     try {
-      await Message.create(messageForDB)
-    } catch (error) {
-      
-    }
+      await Message.create(messageForDB);
+    } catch (error) {}
 
     io.to(membersSockets).emit(NEW_MESSAGE, {
       chatId,
       message: messageForRealTime,
     });
 
-    io.to(membersSockets).emit(NEW_MESSAGE_ALERT, {chatId})
-
+    io.to(membersSockets).emit(NEW_MESSAGE_ALERT, { chatId });
 
     console.log(messageForRealTime);
   });
