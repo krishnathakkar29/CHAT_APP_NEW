@@ -2,17 +2,37 @@ import { useInputValidation } from "6pp";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { sampleUsers } from "@/constant/sampleData";
 import { SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserItem from "../shared/UserItem";
+import { useLazySearchUserQuery, useSendFriendRequestMutation } from "@/redux/api/api";
+import { useAsyncMutation } from "@/hooks/hook";
 function Search({ isOpen, onOpenChange }) {
   const search = useInputValidation("");
-  const isLoadingSendFriendRequest = false;
 
-  const [users, setUsers] = useState(sampleUsers);
+  const [searchUser] = useLazySearchUserQuery();
 
-  const addFriendHandler = (_id) => {
-    console.log("heyjire");
+  const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(
+    useSendFriendRequestMutation
+  );
+
+  const [users, setUsers] = useState([]);
+
+  const addFriendHandler = async (_id) => {
+    await sendFriendRequest("Sending friend request...", { userId: _id });
   };
+
+
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      searchUser(search.value)
+        .then(({ data }) => setUsers(data.users))
+        .catch((e) => console.log(e));
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeOutId);
+    };
+  }, [search.value]);
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">

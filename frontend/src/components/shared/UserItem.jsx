@@ -1,3 +1,4 @@
+import { transformImage } from "@/lib/features";
 import { Avatar } from "@mui/material";
 import { Minus, Plus } from "lucide-react";
 import React, { memo } from "react";
@@ -16,7 +17,7 @@ function UserItem({
       style={{...styling}}
     >
       <Avatar
-        src={avatar}
+        src={transformImage(avatar)}
         sx={{
           height: 50,
           width: 50,

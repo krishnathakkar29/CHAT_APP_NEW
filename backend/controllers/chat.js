@@ -9,7 +9,11 @@ import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { Message } from "../models/message.js";
 import { User } from "../models/user.js";
-import { deletFilesFromCloudinary, emitEvent, uploadFilesToCloudinary } from "../utils/features.js";
+import {
+  deletFilesFromCloudinary,
+  emitEvent,
+  uploadFilesToCloudinary,
+} from "../utils/features.js";
 import { ErrorHandler } from "../utils/utility.js";
 
 const newGroupChat = TryCatch(async (req, res, next) => {
@@ -38,6 +42,7 @@ const newGroupChat = TryCatch(async (req, res, next) => {
 });
 
 const getMyChats = TryCatch(async (req, res, next) => {
+  console.log("yaha aaya");
   const chats = await Chat.find({
     members: req.user,
   }).populate("members", "name avatar");
@@ -45,6 +50,7 @@ const getMyChats = TryCatch(async (req, res, next) => {
   const transformedChats = chats.map(
     ({ _id, groupChat, creator, name, members }) => {
       const otherMember = getOtherMember(members, req.user);
+
       return {
         _id,
         name: groupChat ? name : otherMember.name,
@@ -450,5 +456,5 @@ export {
   getChatDetails,
   renameGroup,
   deleteChat,
-  getMessages
+  getMessages,
 };

@@ -14,6 +14,7 @@ import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
+import { socketAuthenticator } from "./middlewares/auth.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -32,6 +33,8 @@ cloudinary.config({
 });
 connectDB();
 
+app.set("io", io);
+
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
@@ -41,15 +44,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/chat", chatRouter);
 
-const user = {
-  _id: "moimsd",
-  name: "kt",
-};
+io.use((socket, next) => {
+  cookieParser()(socket.request, socket.request.response, async (err) => {
+    await socketAuthenticator(err, socket, next);
+  });
+});
 
 io.on("connection", (socket) => {
+  const user = socket.user;
+
   console.log(`Joined ${socket.id}`);
 
-  userSocketIDs.set(user._id, socket.id);
+  userSocketIDs.set(user._id.toString(), socket.id);
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
     const messageForRealTime = {
@@ -68,7 +74,6 @@ io.on("connection", (socket) => {
       sender: user._id,
       chat: chatId,
     };
-
     const membersSockets = getSockets(members);
 
     try {
@@ -80,9 +85,8 @@ io.on("connection", (socket) => {
       message: messageForRealTime,
     });
 
+    // console.log("emitting for real time", messageForRealTime);
     io.to(membersSockets).emit(NEW_MESSAGE_ALERT, { chatId });
-
-    console.log(messageForRealTime);
   });
 
   socket.on("disconnect", () => {

@@ -355,7 +355,7 @@ const Login = () => {
         config
       );
 
-      dispatch(userExists(data.user));
+      dispatch(userExists(true));
       console.log(data.user);
       toast.success(data.message, {
         id: toastId,
@@ -401,11 +401,9 @@ const Login = () => {
             backdropFilter: "blur(10px)",
             backgroundColor: "#1E293B",
             color: "#E2E8F0",
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
             background: "rgba(255, 255, 255, 0.3)",
             borderRadius: "16px",
             boxShadow: " 0 4px 30px rgba(0, 0, 0, 0.1)",
-            backdropFilter: " bblur(0px)",
             WebkitBackdropFilter: "bblur(0px)",
             border: "1px solid rgba(255, 255, 255, 1)",
           }}

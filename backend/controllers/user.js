@@ -2,6 +2,7 @@ import { compare } from "bcrypt";
 import { User } from "../models/user.js";
 import {
   cookieOptions,
+  emitEvent,
   sendToken,
   uploadFilesToCloudinary,
 } from "../utils/features.js";
@@ -9,6 +10,7 @@ import { ErrorHandler } from "../utils/utility.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { NEW_REQUEST } from "../constants/events.js";
+import { Request } from "../models/request.js";
 
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;

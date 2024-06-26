@@ -5,11 +5,14 @@ import {
 } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import React from "react";
+import moment from "moment";
+import { transformImage } from "@/lib/features";
 
-const ProfileCard = () => {
+const ProfileCard = ({ user }) => {
   return (
     <div className="flex flex-col items-center gap-8">
       <Avatar
+        src={transformImage(user?.avatar?.url)}
         sx={{
           height: 200,
           width: 200,
@@ -18,14 +21,18 @@ const ProfileCard = () => {
         }}
       />
 
-      <Profile heading={"Bio"} text={"user?.bio"} />
+      <Profile heading={"Bio"} text={user?.bio} />
       <Profile
         heading={"username"}
-        text={"user?.bio"}
+        text={user?.username}
         Icon={<UserNameIcon />}
       />
-      <Profile heading={"name"} text={"user?.bio"} Icon={<FaceIcon />} />
-      <Profile heading={"joined"} text={"user?.bio"} Icon={<CalendarIcon />} />
+      <Profile heading={"name"} text={user?.name} Icon={<FaceIcon />} />
+      <Profile
+        heading={"joined"}
+        text={moment(user?.createdAt).fromNow()}
+        Icon={<CalendarIcon />}
+      />
     </div>
   );
 };

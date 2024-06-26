@@ -9,11 +9,16 @@ import {
 } from "@/components/ui/tooltip";
 import { server } from "@/constant/config";
 import { userNotExists } from "@/redux/reducers/auth";
+import {
+  setIsMobile,
+  setIsNotification,
+  setIsSearch,
+} from "@/redux/reducers/misc";
 import { Backdrop } from "@mui/material";
 import axios from "axios";
 import { Suspense, lazy, useState } from "react";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const SearchDialog = lazy(() => import("../specific/Search"));
@@ -24,23 +29,25 @@ export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [isSearch, setIsSearch] = useState(false);
+  const { isMobile, isSearch, isNotification } = useSelector(
+    (state) => state.misc
+  );
+
   const [isNewGroup, setIsNewGroup] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isNotification, setIsNotification] = useState(false);
+  // const [isNotification, setIsNotification] = useState(false);
 
   const handleMobile = () => {
-    setIsMobile((prev) => !prev);
+    dispatch(setIsMobile(true));
   };
 
   const openSearch = () => {
-    setIsSearch((prev) => !prev);
+    dispatch(setIsSearch(!isSearch));
   };
   const openNewGroup = () => {
     setIsNewGroup((prev) => !prev);
   };
   const openNotification = () => {
-    setIsNotification((prev) => !prev);
+    dispatch(setIsNotification(!isNotification));
   };
 
   const logoutHandler = async () => {
@@ -197,7 +204,7 @@ export default function Header() {
         <Suspense fallback={<Backdrop open />}>
           <NotifcationDialog
             isOpen={isNotification}
-            onOpenChange={setIsNotification}
+            onOpenChange={openNotification}
           />
         </Suspense>
       )}

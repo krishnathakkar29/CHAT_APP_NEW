@@ -3,29 +3,67 @@ import UserItem from "../shared/UserItem";
 import { Cross, Plus, SearchIcon } from "lucide-react";
 import { sampleNotifications } from "@/constant/sampleData";
 import { memo } from "react";
-import { Avatar } from "@mui/material";
+import { Avatar, Skeleton } from "@mui/material";
+import {
+  useAcceptFriendRequestMutation,
+  useGetNotificationsQuery,
+} from "@/redux/api/api";
+import { useAsyncMutation, useErrors } from "@/hooks/hook";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setIsNotification } from "@/redux/reducers/misc";
 
 export default function Notifications({ isOpen, onOpenChange }) {
+  const dispatch = useDispatch();
   const users = [1, 2, 3, 4, 5, 3];
 
-  const friendRequestHandler = ({ _id, accept }) => {};
+  const { data, isLoading, error, isError } = useGetNotificationsQuery();
+
+  const [acceptRequest] = useAcceptFriendRequestMutation();
+
+  const friendRequestHandler = async ({ _id, accept }) => {
+    dispatch(setIsNotification(false));
+    try {
+      const res = await acceptRequest({ requestId: _id, accept });
+
+      if (res?.data?.success) {
+        console.log("socket");
+        toast.success(res.data?.message);
+      } else {
+        toast.error(res?.data?.error || "Something went Wrong");
+      }
+    } catch (error) {
+      toast.error("Something went Wrong");
+      console.log("yeh hai error", error);
+    }
+  };
+  useErrors([{ error, isError }]);
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[25rem]">
         <h1 className="text-center text-xl">Notifications</h1>
-        {sampleNotifications.length > 0 ? (
-          sampleNotifications.map(({ sender, _id }) => {
-            return (
-              <NotificationItem
-                sender={sender}
-                _id={_id}
-                key={_id}
-                handler={friendRequestHandler}
-              />
-            );
-          })
+
+        {isLoading ? (
+          <>
+            <Skeleton />
+          </>
         ) : (
-          <p>No Notifications😒</p>
+          <>
+            {data?.allRequests?.length > 0 ? (
+              data?.allRequests?.map(({ sender, _id }) => {
+                return (
+                  <NotificationItem
+                    sender={sender}
+                    _id={_id}
+                    key={_id}
+                    handler={friendRequestHandler}
+                  />
+                );
+              })
+            ) : (
+              <p>No Notifications😒</p>
+            )}
+          </>
         )}
       </DialogContent>
     </Dialog>
@@ -56,16 +94,16 @@ const NotificationItem = memo(({ sender, _id, handler }) => {
           {`${name} send you a friend request`}
         </p>
 
-        <div className="flex flex-col items-center">
+        <div className="flex flex-row items-center gap-2">
           <button
-            className="rounded-xl mb-2 bg-blue-600 text-white p-1"
+            className="rounded-xl bg-blue-600 text-white p-2"
             onClick={() => handler({ _id, accept: true })}
           >
             Accept
           </button>
           <button
-            className="rounded-xl bg-red-600 text-white p-1"
-            onClick={() => handler({ _id, accept: false  })}
+            className="rounded-xl bg-red-600 text-white p-2"
+            onClick={() => handler({ _id, accept: false })}
           >
             Reject
           </button>

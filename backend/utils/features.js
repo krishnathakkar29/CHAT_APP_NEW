@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-import { getBase64 } from "../lib/helper.js";
+import { getBase64, getSockets } from "../lib/helper.js";
 import { v2 as cloudinary } from "cloudinary";
 import { v4 as uuid } from "uuid";
 
@@ -65,8 +65,10 @@ const uploadFilesToCloudinary = async (files = []) => {
 const deletFilesFromCloudinary = async (public_ids) => {}
 
 
-const emitEvent = (req,event,users,data) => {
-  console.log('EMiiting event: - ', event )
-}
+const emitEvent = (req, event, users, data) => {
+  const io = req.app.get("io");
+  const usersSocket = getSockets(users);
+  io.to(usersSocket).emit(event, data);
+};
 
 export { connectDB, sendToken, emitEvent, deletFilesFromCloudinary, uploadFilesToCloudinary };
