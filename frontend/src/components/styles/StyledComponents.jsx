@@ -1,5 +1,5 @@
 import { grayColor } from "@/constant/color";
-import { styled } from "@mui/material";
+import { Skeleton, keyframes, styled } from "@mui/material";
 import { Link as LinkComponent } from "react-router-dom";
 
 const VisuallyHiddenInput = styled("input")({
@@ -33,4 +33,14 @@ const InputBox = styled("input")`
   background-color: ${grayColor};
 `;
 
-export {VisuallyHiddenInput, Link, InputBox}
+const bounceAnimation = keyframes`
+0% { transform: scale(1); }
+50% { transform: scale(1.5); }
+100% { transform: scale(1); }
+`;
+
+const BouncingSkeleton = styled(Skeleton)(() => ({
+  animation: `${bounceAnimation} 1s infinite`,
+}));
+
+export {VisuallyHiddenInput, Link, InputBox, BouncingSkeleton}
