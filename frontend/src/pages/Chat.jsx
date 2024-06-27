@@ -1,57 +1,20 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import AppLayout from "../components/layout/AppLayout";
-import { Image, Paperclip, Send, Video } from "lucide-react";
 import { InputBox } from "@/components/styles/StyledComponents";
-import { orange } from "@/constant/color";
-import {
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
-  User,
-  UserPlus,
-  Users,
-} from "lucide-react";
+import { Send } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import AppLayout from "../components/layout/AppLayout";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { sampleMessage } from "@/constant/sampleData";
-import MessageComponent from "@/components/shared/MessageComponent";
-import { getSocket } from "@/Socket";
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "@/constant/events";
-import {
-  useChatDetailsQuery,
-  useGetMessagesQuery,
-  useSendAttachmentsMutation,
-} from "@/redux/api/api";
-import { IconButton, Skeleton } from "@mui/material";
-import { useErrors, useSocketEvents } from "@/hooks/hook";
 import { useInfiniteScrollTop } from "6pp";
-import { AttachFile as AttachFileIcon } from "@mui/icons-material";
-import toast from "react-hot-toast";
-import { setIsFileMenu, setUploadingLoader } from "@/redux/reducers/misc";
-import { useDispatch } from "react-redux";
+import { getSocket } from "@/Socket";
 import FileMenu from "@/components/dialogs/FileMenu";
+import MessageComponent from "@/components/shared/MessageComponent";
+import { NEW_MESSAGE } from "@/constant/events";
+import { useErrors, useSocketEvents } from "@/hooks/hook";
+import { useChatDetailsQuery, useGetMessagesQuery } from "@/redux/api/api";
+import { setIsFileMenu } from "@/redux/reducers/misc";
+import { AttachFile as AttachFileIcon } from "@mui/icons-material";
+import { IconButton, Skeleton } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { removeNewMessagesAlert } from "@/redux/reducers/chat";
 
 function Chat({ chatId, user }) {
   const containerRef = useRef();
@@ -81,6 +44,16 @@ function Chat({ chatId, user }) {
 
   const members = chatDetails?.data?.chat?.members;
 
+  useEffect(() => {
+    dispatch(removeNewMessagesAlert(chatId));
+    return () => {
+      setMessages([]);
+      setMessage("");
+      setOldMessages([]);
+      setPage(1);
+    };
+  }, [chatId]);
+
   const handleFileOpen = (e) => {
     dispatch(setIsFileMenu(true));
     setFileMenuAnchor(e.currentTarget);
@@ -95,10 +68,14 @@ function Chat({ chatId, user }) {
     setMessage("");
   };
 
-  const newMessagesListener = useCallback((data) => {
-    console.log(data);
-    setMessages((prev) => [...prev, data.message]);
-  }, []);
+  const newMessagesListener = useCallback(
+    (data) => {
+      if (data.chatId !== chatId) return;
+
+      setMessages((prev) => [...prev, data.message]);
+    },
+    [chatId]
+  );
 
   const eventHandler = {
     [NEW_MESSAGE]: newMessagesListener,

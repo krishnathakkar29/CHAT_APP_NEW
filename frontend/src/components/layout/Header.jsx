@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { server } from "@/constant/config";
 import { userNotExists } from "@/redux/reducers/auth";
+import { resetNotificationCount } from "@/redux/reducers/chat";
 import {
   setIsMobile,
   setIsNotification,
@@ -32,6 +33,7 @@ export default function Header() {
   const { isMobile, isSearch, isNotification } = useSelector(
     (state) => state.misc
   );
+  const { notificationCount } = useSelector((state) => state.chat);
 
   const [isNewGroup, setIsNewGroup] = useState(false);
   // const [isNotification, setIsNotification] = useState(false);
@@ -48,6 +50,7 @@ export default function Header() {
   };
   const openNotification = () => {
     dispatch(setIsNotification(!isNotification));
+    dispatch(resetNotificationCount())
   };
 
   const logoutHandler = async () => {
@@ -164,7 +167,7 @@ export default function Header() {
                     <BellIcon className="h-5 w-5" />
                   </Button>
                   <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                    0
+                    {notificationCount}
                   </div>
                 </div>
               </TooltipTrigger>

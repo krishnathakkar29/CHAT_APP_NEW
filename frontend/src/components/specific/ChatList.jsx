@@ -3,7 +3,7 @@ import React from "react";
 import ChatItem from "../shared/ChatItem";
 
 const ChatList = ({
-  width = "100%",
+  w = "100%",
   chats = [],
   chatId,
   onlineUsers = [],
@@ -16,12 +16,12 @@ const ChatList = ({
   handleDeleteChat,
 }) => {
   return (
-    <Stack direction={"column"} width={width} overflow={"auto"} height={"100%"}>
+    <Stack width={w} direction={"column"} overflow={"auto"} height={"100%"}>
       {chats?.map((data, index) => {
-        const { avatar, name, _id, groupChat, members } = data;
+        const { avatar, _id, name, groupChat, members } = data;
 
         const newMessageAlert = newMessagesAlert.find(
-          ({ chatId }) => chatId == _id
+          ({ chatId }) => chatId === _id
         );
 
         const isOnline = members?.some((member) =>
@@ -31,14 +31,14 @@ const ChatList = ({
         return (
           <ChatItem
             index={index}
-            newMessageAlert={newMessagesAlert}
+            newMessageAlert={newMessageAlert}
             isOnline={isOnline}
             avatar={avatar}
             name={name}
             _id={_id}
-            key={index}
+            key={_id}
             groupChat={groupChat}
-            sameSender={chatId == _id}
+            sameSender={chatId === _id}
             handleDeleteChat={handleDeleteChat}
           />
         );
