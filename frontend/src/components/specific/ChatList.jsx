@@ -6,7 +6,6 @@ const ChatList = ({
   w = "100%",
   chats = [],
   chatId,
-  onlineUsers = [],
   newMessagesAlert = [
     {
       chatId: "",
@@ -24,15 +23,13 @@ const ChatList = ({
           ({ chatId }) => chatId === _id
         );
 
-        const isOnline = members?.some((member) =>
-          onlineUsers.includes(member)
-        );
+        
 
         return (
           <ChatItem
             index={index}
             newMessageAlert={newMessageAlert}
-            isOnline={isOnline}
+           
             avatar={avatar}
             name={name}
             _id={_id}

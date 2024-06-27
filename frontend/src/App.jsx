@@ -24,7 +24,7 @@ function App() {
     axios
       .get(`${server}/api/v1/user/me`, { withCredentials: true })
       .then(({ data }) => {
-        console.log(data.user);
+        
         dispatch(userExists(data.user));
       })
       .catch((err) => {

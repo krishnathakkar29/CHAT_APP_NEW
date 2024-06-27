@@ -21,12 +21,14 @@ import { IconButton, Skeleton } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { removeNewMessagesAlert } from "@/redux/reducers/chat";
 import { TypingLoader } from "@/components/layout/Loaders";
+import { useNavigate } from "react-router-dom";
 
 function Chat({ chatId, user }) {
   const containerRef = useRef();
   const bottomRef = useRef(null);
   const socket = getSocket();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -70,6 +72,10 @@ function Chat({ chatId, user }) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    //unauthorized access
+    if (chatDetails.isError) return navigate("/");
+  }, [chatDetails.isError]);
   const handleFileOpen = (e) => {
     dispatch(setIsFileMenu(true));
     setFileMenuAnchor(e.currentTarget);
@@ -137,7 +143,6 @@ function Chat({ chatId, user }) {
         chat: chatId,
         createdAt: new Date().toISOString(),
       };
-
       setMessages((prev) => [...prev, messageForAlert]);
     },
     [chatId]

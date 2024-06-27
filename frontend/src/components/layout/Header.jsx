@@ -12,6 +12,7 @@ import { userNotExists } from "@/redux/reducers/auth";
 import { resetNotificationCount } from "@/redux/reducers/chat";
 import {
   setIsMobile,
+  setIsNewGroup,
   setIsNotification,
   setIsSearch,
 } from "@/redux/reducers/misc";
@@ -30,12 +31,12 @@ export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { isMobile, isSearch, isNotification } = useSelector(
+  const { isMobile, isSearch, isNotification, isNewGroup } = useSelector(
     (state) => state.misc
   );
   const { notificationCount } = useSelector((state) => state.chat);
 
-  const [isNewGroup, setIsNewGroup] = useState(false);
+  // const [isNewGroup, setIsNewGroup] = useState(false);
   // const [isNotification, setIsNotification] = useState(false);
 
   const handleMobile = () => {
@@ -46,7 +47,7 @@ export default function Header() {
     dispatch(setIsSearch(!isSearch));
   };
   const openNewGroup = () => {
-    setIsNewGroup((prev) => !prev);
+    dispatch(setIsNewGroup(!isNewGroup))
   };
   const openNotification = () => {
     dispatch(setIsNotification(!isNotification));
@@ -58,7 +59,6 @@ export default function Header() {
       const { data } = await axios.get(`${server}/api/v1/user/logout`, {
         withCredentials: true,
       });
-      console.log(data);
       dispatch(userNotExists());
       toast.success(data.message);
     } catch (error) {

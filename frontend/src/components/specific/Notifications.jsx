@@ -23,19 +23,12 @@ export default function Notifications({ isOpen, onOpenChange }) {
 
   const friendRequestHandler = async ({ _id, accept }) => {
     dispatch(setIsNotification(false));
-    try {
-      const res = await acceptRequest({ requestId: _id, accept });
-
-      if (res?.data?.success) {
-        console.log("socket");
-        toast.success(res.data?.message);
-      } else {
-        toast.error(res?.data?.error || "Something went Wrong");
-      }
-    } catch (error) {
-      toast.error("Something went Wrong");
-      console.log("yeh hai error", error);
-    }
+    const options = {
+      requestId: _id,
+      accept,
+    };
+    console.log("options logge ", options);
+    await acceptRequest("Accepting...", options);
   };
   useErrors([{ error, isError }]);
   return (

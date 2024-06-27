@@ -1,5 +1,5 @@
 import AppLayout from "@/components/layout/AppLayout";
-import { Grid } from "@mui/material";
+import { Grid, Skeleton } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
 import {
   Tooltip,
@@ -37,6 +37,17 @@ import { Link } from "@/components/styles/StyledComponents";
 import AvatarCard from "@/components/shared/AvatarCard";
 import { samepleChats, sampleUsers } from "@/constant/sampleData";
 import UserItem from "@/components/shared/UserItem";
+import {
+  useAddGroupMembersMutation,
+  useAvailableFriendsQuery,
+  useChatDetailsQuery,
+  useDeleteChatMutation,
+  useMyGroupsQuery,
+  useRemoveGroupMemberMutation,
+  useRenameGroupMutation,
+} from "@/redux/api/api";
+import { useAsyncMutation, useErrors } from "@/hooks/hook";
+import { LayoutLoader } from "@/components/layout/Loaders";
 
 const Groups = () => {
   const navigate = useNavigate();
@@ -58,6 +69,44 @@ const Groups = () => {
   //open add member dialog
   const [isAddMember, setIsAddMember] = useState(false);
 
+  const myGroups = useMyGroupsQuery();
+  const groupDetails = useChatDetailsQuery(
+    { chatId, populate: true },
+    { skip: !chatId }
+  );
+  const [updateGroup, isLoadingGroupName] = useAsyncMutation(
+    useRenameGroupMutation
+  );
+
+  const [removeMember, isLoadingRemoveMember] = useAsyncMutation(
+    useRemoveGroupMemberMutation
+  );
+
+  const [addMembers] = useAsyncMutation(
+    useAddGroupMembersMutation
+  );
+
+  const [deleteGroup, isLoadingDeleteGroup] = useAsyncMutation(
+    useDeleteChatMutation
+  );
+
+  const { isLoading, data, isError, error } = useAvailableFriendsQuery(chatId);
+
+  useErrors([
+    {
+      isError: myGroups.isError,
+      error: myGroups.error,
+    },
+    {
+      isError: groupDetails.isError,
+      error: groupDetails.error,
+    },
+    {
+      isError,
+      error,
+    },
+  ]);
+
   useEffect(() => {
     function handleResize(e) {
       if (window.innerWidth > 640 && isMobileMenuOpen) {
@@ -70,22 +119,27 @@ const Groups = () => {
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
-    if (chatId) {
-      setGroupName(`GroupName ${chatId}`);
-      setGroupNameUpdatedValue(`GroupName ${chatId}`);
+    const groupData = groupDetails.data;
+    if (groupData) {
+      setGroupName(groupData.chat.name);
+      setGroupNameUpdatedValue(groupData.chat.name);
+      setMembers(groupData.chat.members);
     }
-
-    // if (isEdit) return setIsEdit(false);
 
     return () => {
       setGroupName("");
       setGroupNameUpdatedValue("");
+      setMembers([]);
       setIsEdit(false);
     };
-  }, [chatId]);
+  }, [groupDetails.data]);
 
   const updateGroupName = () => {
     setIsEdit(false);
+    updateGroup("Updating Group Name...", {
+      chatId,
+      name: groupNameUpdatedValue,
+    });
   };
 
   const openConfirmDeleteHandler = () => {
@@ -97,23 +151,22 @@ const Groups = () => {
   };
 
   const deleteHandler = () => {
-    console.log("Delete handler");
+    deleteGroup("Deleting Group..", chatId)
+    navigate("/groups")
     setConfirmDeleteDialog(false);
   };
 
-  // plus icon on the user item -- nope
-  // const addFriendHandler = (id) => {
-  //   console.log(`user id : ${id}`);
-  // };
-
-  //add member dialog submit changes handler
-  const addMemberSubmitHandler = () => {};
+  const addMemberSubmitHandler = () => {
+    addMembers("Adding Members...", { members: selectedMembers, chatId });
+    setIsAddMember(false);
+  };
 
   const removeFromMainScreenMembers = (id) => {
+    removeMember("Removing Member..", { chatId, userId: id });
     console.log("main user , id");
   };
 
-  const [members, setMembers] = useState(sampleUsers);
+  const [members, setMembers] = useState([]);
   const [selectedMembers, setSelectedMembers] = useState([]);
 
   const selectMemberHandler = (id) => {
@@ -171,7 +224,7 @@ const Groups = () => {
                 value={groupNameUpdatedValue}
                 onChange={(e) => setGroupNameUpdatedValue(e.target.value)}
               />
-              <Done onClick={updateGroupName} />
+              <Done onClick={updateGroupName} disabled={isLoadingGroupName} />
             </div>
           </>
         ) : (
@@ -185,7 +238,9 @@ const Groups = () => {
     </>
   );
 
-  return (
+  return myGroups.isLoading ? (
+    <LayoutLoader />
+  ) : (
     <Grid container height={"100vh"}>
       <Grid
         item
@@ -194,12 +249,11 @@ const Groups = () => {
             xs: "none",
             sm: "block",
           },
-          
         }}
         sm={4}
         bgcolor={"bisque"}
       >
-        <GroupList myGroups={samepleChats} chatId={chatId} />
+        <GroupList myGroups={myGroups?.data?.groups} chatId={chatId} />
       </Grid>
 
       <Grid
@@ -224,7 +278,7 @@ const Groups = () => {
           <div className="flex flex-col gap-3 w-full max-w-xl h-[50vh] box-border overflow-y-auto">
             {/* members */}
 
-            {sampleUsers.map((i) => (
+            {groupDetails?.data?.chat?.members?.map((i) => (
               <UserItem
                 styling={{
                   padding: "1rem 2rem",
@@ -298,19 +352,27 @@ const Groups = () => {
                 <DialogHeader>
                   <DialogTitle>Add Members</DialogTitle>
                   <DialogDescription>
-                    <div className="flex flex-col gap-4 p-4 ">
-                      {members.length > 0 ? (
-                        members.map((i) => (
-                          <UserItem
-                            user={i}
-                            key={i._id}
-                            handler={selectMemberHandler}
-                            isAdded={selectedMembers.includes(i._id)}
-                          />
-                        ))
+                    <div className="flex flex-col p-4 w-full max-w-xl max-h-[70vh] overflow-y-auto">
+                      {isLoading ? (
+                        <Skeleton />
                       ) : (
                         <>
-                          <p className="text-center">No Friends..</p>
+                          <ul className=" heyo list-none overflow-y-scroll h-full">
+                            {data?.friends?.length > 0 ? (
+                              data?.friends?.map((i) => (
+                                <UserItem
+                                  user={i}
+                                  key={i._id}
+                                  handler={selectMemberHandler}
+                                  isAdded={selectedMembers.includes(i._id)}
+                                />
+                              ))
+                            ) : (
+                              <>
+                                <p className="text-center">No Friends..</p>
+                              </>
+                            )}
+                          </ul>
                         </>
                       )}
                     </div>
@@ -350,7 +412,7 @@ const Groups = () => {
             <SheetHeader>
               <SheetTitle>Chats</SheetTitle>
               <SheetDescription>
-                <GroupList myGroups={samepleChats} chatId={chatId} />
+                <GroupList myGroups={myGroups?.data?.groups} chatId={chatId} />
               </SheetDescription>
             </SheetHeader>
 
@@ -371,10 +433,8 @@ const GroupList = ({ myGroups = [], chatId }) => {
     <>
       <div className="flex flex-col overflow-y-auto max-h-screen">
         {myGroups.length > 0 ? (
-          myGroups.map((group) => {
-            return (
-              <GroupListItem group={group} chatId={chatId} key={group._id} />
-            );
+          myGroups.map((group, index) => {
+            return <GroupListItem group={group} chatId={chatId} key={index} />;
           })
         ) : (
           <p className="text-center text-2xl p-4">No Groups 🙄</p>

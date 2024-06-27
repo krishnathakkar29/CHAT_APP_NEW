@@ -2,13 +2,22 @@ import { fileFormat } from "@/lib/features";
 import moment from "moment";
 import React, { memo } from "react";
 import RenderAttachment from "./RenderAttachment";
+import { motion } from "framer-motion";
 
 const MessageComponent = ({ message, user }) => {
   const { sender, attachments = [], content, createdAt } = message;
 
   const sameSender = sender._id.toString() == user?._id.toString();
   return (
-    <div
+    <motion.div
+      initial={{
+        opacity: 0,
+        x: "-100%",
+      }}
+      whileInView={{
+        opacity: 1,
+        x: "0",
+      }}
       style={{
         alignSelf: sameSender ? "flex-end" : "flex-start",
         backgroundColor: "white",
@@ -48,7 +57,7 @@ const MessageComponent = ({ message, user }) => {
       <p className="text-[0.8rem] text-gray-500">
         {moment(createdAt).fromNow()}
       </p>
-    </div>
+    </motion.div>
   );
 };
 

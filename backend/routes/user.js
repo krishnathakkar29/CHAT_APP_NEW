@@ -45,8 +45,8 @@ app.put(
 
 app.put(
   "/acceptrequest",
-  acceptRequestValidator(),
-  validateHandler,
+  // acceptRequestValidator(),
+  // validateHandler,
   acceptFriendRequest
 );
 

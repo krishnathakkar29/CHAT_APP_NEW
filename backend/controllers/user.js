@@ -11,6 +11,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { NEW_REQUEST } from "../constants/events.js";
 import { Request } from "../models/request.js";
+import { getOtherMember } from "../lib/helper.js";
 
 const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;
@@ -62,7 +63,7 @@ const getMyProfile = TryCatch(async (req, res, next) => {
 });
 
 const logout = TryCatch(async (req, res, next) => {
-  console.log("yaha aaya");
+
   return res
     .status(200)
     .cookie("chat-token", "", { ...cookieOptions, maxAge: 0 })
@@ -123,6 +124,8 @@ const sendFriendRequest = TryCatch(async (req, res, next) => {
 
 const acceptFriendRequest = TryCatch(async (req, res, next) => {
   const { requestId, accept } = req.body;
+  console.log("iske baad \n");
+  console.log("delh bhai", requestId, accept);
 
   const request = await Request.findById(requestId)
     .populate("sender", "name")
