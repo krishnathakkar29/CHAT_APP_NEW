@@ -378,7 +378,7 @@ const Login = () => {
         // backgroundColor: "#1E293B",
       }}
     >
-      {/* <ParticleRing /> */}
+      <ParticleRing />
       <Container
         component={"main"}
         maxWidth="xs"
